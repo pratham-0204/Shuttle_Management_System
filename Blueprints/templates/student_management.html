@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management - Shuttle Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --green: #3F7D58;
+            --light-gray: #EFEFEF;
+            --orange: #EF9651;
+            --red: #EC5228;
+        }
+        
+        body {
+            background-color: var(--light-gray);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 90vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .navbar {
+            background-color: var(--green);
+        }
+        
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+            margin-bottom: 20px;
+        }
+        
+        .table {
+            margin-bottom: 0;
+        }
+        
+        .table th {
+            background-color: var(--green);
+            color: white;
+        }
+        
+        .btn-primary {
+            background-color: var(--green);
+            border-color: var(--green);
+        }
+        
+        .btn-primary:hover {
+            background-color: #346a4a;
+            border-color: #346a4a;
+        }
+        
+        .btn-warning {
+            background-color: var(--orange);
+            border-color: var(--orange);
+            color: white;
+        }
+        
+        .btn-warning:hover {
+            background-color: #d88546;
+            border-color: #d88546;
+            color: white;
+        }
+        
+        .btn-back {
+            background-color: var(--green);
+            border: none;
+            color: white;
+            margin-bottom: 20px;
+        }
+        
+        .btn-back:hover {
+            background-color: #346a4a;
+        }
+        
+        .points-section {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--green);
+            box-shadow: 0 0 0 0.25rem rgba(63, 125, 88, 0.25);
+        }
+
+        .point-badge {
+            background-color: var(--green);
+            font-size: 1rem;
+            padding: 5px 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="bi bi-bus-front"></i> Shuttle Management System
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin.admin_logout') }}"><i class="bi bi-box-arrow-right"></i> Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-4">
+        
+        <!-- Page Header -->
+        <div class="row mb-4">
+            <div class="col-12 d-flex justify-content-between align-items-center">
+                <h2><i class="bi bi-people text-success"></i> Student Management</h2>
+                <a href="{{ url_for('admin.admin_dashboard') }}" class="btn btn-back">
+                    <i class="bi bi-arrow-left"></i> Back to Dashboard
+                </a>
+            </div>
+        </div>
+
+        <!-- Points Assignment Sections -->
+        <div class="row">
+            <!-- Bulk Points Assignment Section -->
+            <div class="col-md-6 mb-4">
+                <div class="points-section h-100">
+                    <h4 class="mb-3">Assign Points to All Students</h4>
+                    <form method="POST" action="#">
+                        <div class="mb-3">
+                            <label for="pointsAllStudents" class="form-label">Points to Assign</label>
+                            <input type="number" class="form-control" id="pointsAllStudents" name="points" min="1" value="10" required>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-plus-circle"></i> Assign Points to All Students
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Individual Points Assignment Section -->
+            <div class="col-md-6 mb-4">
+                <div class="points-section h-100">
+                    <h4 class="mb-3">Assign Points to Individual Student</h4>
+                    <form method="POST" action="#">
+                        <div class="mb-3">
+                            <label for="enrollmentNumber" class="form-label">Student Enrollment Number</label>
+                            <input type="text" class="form-control" id="enrollmentNumber" name="enrollment_number" placeholder="Enter enrollment number" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="pointsIndividual" class="form-label">Points to Assign</label>
+                            <input type="number" class="form-control" id="pointsIndividual" name="points" min="1" value="5" required>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-warning">
+                                <i class="bi bi-plus-circle"></i> Assign Points to Student
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

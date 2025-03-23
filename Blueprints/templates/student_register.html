@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Register</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        background-color: #EFEFEF;
+        color: #333;
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+      }
+
+      .container {
+        background-color: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 400px;
+        text-align: center;
+      }
+
+      h2 {
+        color: #3F7D58;
+        margin-bottom: 15px;
+      }
+
+      .input-group {
+        margin: 10px 0;
+        width: 100%;
+      }
+
+      input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background: #EFEFEF;
+        font-size: 16px;
+      }
+
+      button {
+        width: 100%;
+        padding: 10px;
+        background: #3F7D58;
+        border: none;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 5px;
+        margin-top: 10px;
+      }
+
+      button:hover {
+        background: #345e46;
+      }
+
+      p {
+        margin-top: 10px;
+      }
+
+      p a {
+        color: #EC5228;
+        text-decoration: none;
+      }
+
+      p a:hover {
+        color: #EF9651;
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+        <h2>Student Registration</h2>
+
+        <!-- Flash Messages Block -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form action="{{ url_for('student.student_register') }}" method="POST" onsubmit="return validatePassword()">
+            <div class="input-group">
+                <input type="text" name="name" placeholder="Full Name" required />
+            </div>
+            <div class="input-group">
+                <input type="email" name="email" placeholder="University Email" required />
+            </div>
+            <div class="input-group">
+                <input type="password" id="password" name="password" placeholder="Password" required />
+            </div>
+            <div class="input-group">
+                <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm Password" required />
+            </div>
+            <div id="password-error" style="color: #EC5228; display: none;">Passwords do not match!</div>
+            <button type="submit">Register</button>
+        </form>
+
+        <p>
+            Already have an account?
+            <a href="{{ url_for('student.student_login') }}">Login here</a>
+        </p>
+    </div>
+
+    <script>
+        function validatePassword() {
+            var password = document.getElementById("password").value;
+            var confirmPassword = document.getElementById("confirm_password").value;
+            var errorMessage = document.getElementById("password-error");
+
+            if (password !== confirmPassword) {
+                errorMessage.style.display = "block";
+                return false; // Prevent form submission
+            } else {
+                errorMessage.style.display = "none";
+                return true;
+            }
+        }
+    </script>
+</body>
+</html>

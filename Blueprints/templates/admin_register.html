@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Registration</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #EFEFEF;
+            color: #333;
+        }
+        .login-box {
+            background-color: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        .btn-primary {
+            background-color: #3F7D58;
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #345e46;
+        }
+        .register-link {
+            color: #EC5228;
+            text-decoration: none;
+        }
+        .register-link:hover {
+            color: #EF9651;
+            text-decoration: underline;
+        }
+        h2 {
+            color: #3F7D58;
+        }
+        #password-error {
+            color: #EC5228 !important;
+        }
+    </style>
+</head>
+<body class="d-flex justify-content-center align-items-center vh-100">
+    <div class="login-box text-center">
+        <h2 class="mb-4">Admin Registration</h2>
+
+        <!-- Flash Messages Block -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form action="{{ url_for('admin.admin_register') }}" method="POST" onsubmit="return validatePassword()">
+            <div class="mb-3">
+                <input type="text" class="form-control" name="name" placeholder="Full Name" required>
+            </div>
+            <div class="mb-3">
+                <input type="email" class="form-control" name="email" placeholder="Email" required>
+            </div>
+            <div class="mb-3">
+                <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
+            </div>
+            <div class="mb-3">
+                <input type="password" class="form-control" id="confirm_password" name="confirm_password" placeholder="Confirm Password" required>
+            </div>
+            <div id="password-error" style="display: none;" class="mb-3 text-start">Passwords do not match!</div>
+            <button type="submit" class="btn btn-primary w-100">Register</button>
+        </form>
+
+        <p class="mt-3">Already an admin? 
+            <a href="{{ url_for('admin.admin_login') }}" class="register-link">Login here</a>
+        </p>
+    </div>
+
+    <script>
+        function validatePassword() {
+            var password = document.getElementById("password").value;
+            var confirmPassword = document.getElementById("confirm_password").value;
+            var errorMessage = document.getElementById("password-error");
+
+            if (password !== confirmPassword) {
+                errorMessage.style.display = "block";
+                return false; // Prevent form submission
+            } else {
+                errorMessage.style.display = "none";
+                return true;
+            }
+        }
+    </script>
+</body>
+</html>

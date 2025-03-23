@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Find Shuttle</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --green: #3F7D58;
+        --light-gray: #EFEFEF;
+        --orange: #EF9651;
+        --red: #EC5228;
+      }
+
+      body {
+        background-color: var(--light-gray);
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        font-size: 1.1rem;
+      }
+
+      .navbar {
+        background-color: var(--green);
+        padding: 0.8rem 0;
+      }
+
+      .card {
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+        background-color: white;
+      }
+
+      .card-header {
+        background-color: var(--green);
+        color: white;
+        border-radius: 10px 10px 0 0 !important;
+        font-weight: bold;
+        font-size: 1.2rem;
+        padding: 0.8rem 1.2rem;
+      }
+
+      .card-body {
+        padding: 1.5rem;
+      }
+
+      .btn-primary {
+        background-color: var(--orange);
+        border-color: var(--orange);
+        font-size: 1.1rem;
+        padding: 0.5rem 1.5rem;
+      }
+
+      .btn-primary:hover {
+        background-color: #d8874a;
+        border-color: #d8874a;
+      }
+
+      .badge {
+        font-size: 0.95rem;
+        padding: 0.5rem 0.8rem;
+        border-radius: 6px;
+      }
+
+      .badge-available {
+        background-color: var(--green);
+        color: white;
+      }
+
+      .badge-unavailable {
+        background-color: var(--red);
+        color: white;
+      }
+
+      .requirements-card {
+        background-color: rgba(63, 125, 88, 0.15);
+        margin-bottom: 2rem;
+      }
+
+      .match-highlight {
+        border: 2px solid var(--orange);
+        background-color: rgba(239, 150, 81, 0.1);
+      }
+
+      .shuttle-time {
+        color: #555;
+        font-weight: 500;
+        font-size: 1.15rem;
+        margin-bottom: 1.2rem;
+      }
+
+      .shuttle-route {
+        color: #333;
+        font-style: italic;
+        font-size: 1.15rem;
+        margin-bottom: 1.2rem;
+      }
+
+      .btn-outline-secondary {
+        color: var(--green);
+        border-color: var(--green);
+        border-width: 2px;
+        font-size: 1.1rem;
+        padding: 0.5rem 1.8rem;
+      }
+
+      .btn-outline-secondary:hover {
+        background-color: var(--green);
+        color: white;
+        border-color: var(--green);
+      }
+
+      h3 {
+        font-size: 1.8rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        color: #333;
+      }
+
+      h5.card-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin-bottom: 1.2rem;
+        color: #333;
+      }
+
+      .card-text {
+        font-size: 1.15rem;
+        line-height: 1.6;
+      }
+
+      .container {
+        max-width: 1000px;
+      }
+
+      footer {
+        margin-top: 3rem;
+        padding: 1.2rem 0;
+      }
+
+      .trip-details {
+        font-size: 1.15rem;
+        line-height: 1.8;
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          padding-left: 1.5rem;
+          padding-right: 1.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark mb-4">
+      <div class="container-fluid">
+          <a class="navbar-brand" href="#">
+              <i class="bi bi-bus-front"></i> Shuttle Management System
+          </a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+              <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+              <ul class="navbar-nav ms-auto">
+                  <li class="nav-item">
+                      <a class="nav-link" href="student_logout"><i class="bi bi-box-arrow-right"></i> Logout</a>
+                  </li>
+              </ul>
+          </div>
+      </div>
+  </nav>
+
+    <div class="container mb-5">
+      <!-- Requirements Section -->
+      <div class="card requirements-card mb-4">
+        <div class="card-header">Your Requirements</div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="card h-100">
+                <div class="card-body">
+                  <div class="trip-details">
+                    <div class="row mb-2">
+                      <div class="col-md-6">
+                        <div class="d-flex align-items-center">
+                          <span class="badge bg-secondary me-2">From</span>
+                          <span class="fw-bold">{{ session[from_stop] }}</span>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="d-flex align-items-center">
+                          <span class="badge bg-secondary me-2">To</span>
+                          <span class="fw-bold">{{ session[to_stop] }}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row mb-2">
+                      <div class="col-md-6">
+                        <div class="d-flex align-items-center">
+                          <span class="badge bg-secondary me-2">Date</span>
+                          <span class="fw-bold black">{{ date }}</span>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="d-flex align-items-center">
+                          <span class="badge bg-secondary me-2">Points</span>
+                          <span class="fw-bold" style="color: var(--orange);"
+                            >{{ pointsTodeduct }}</span
+                          >
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Shuttle List Section -->
+      <h3>Available Shuttles</h3>
+      <div class="row justify-content-center">
+        {% for shuttle in shuttle_list %}
+        <div class="col-lg-12 mb-4">
+          <div
+            class="card {% if shuttle.matches_requirement %}match-highlight{% endif %}"
+          >
+            <div
+              class="card-header d-flex justify-content-between align-items-center"
+            >
+              <span>{{ shuttle[1] }}</span>
+              <span
+                class="badge {% if shuttle[2] > 0 %}badge-available{% else %}badge-unavailable{% endif %}"
+              >
+                {% if shuttle[2] > 0 %}{{ shuttle[2] }} Seats Available{% else
+                %}Full{% endif %}
+              </span>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-8">
+                  <h5 class="card-title">ID: {{ shuttle[0] }}</h5>
+                  <p class="card-text shuttle-route">
+                    <strong>Route:</strong> {{ shuttle[3] }}
+                  </p>
+                  <p class="card-text shuttle-time">
+                    <strong>Schedule:</strong> {{ shuttle[4] }} - {{ shuttle[5]
+                    }}
+                  </p>
+                </div>
+                <div
+                  class="col-md-4 d-flex align-items-end justify-content-end"
+                >
+                  <form
+                    action="#"
+                    method="POST"
+                  >
+                    <input
+                      type="hidden"
+                      name="shuttle_id"
+                      value="{{ shuttle[0] }}"
+                    />
+                    <input
+                      type="hidden"
+                      name="from_stop"
+                      value="{{ from_stop }}"
+                    />
+                    <input type="hidden" name="to_stop" value="{{ to_stop }}" />
+                    <input
+                      type="hidden"
+                      name="date_chosen"
+                      value="{{ date }}"
+                    />
+                    <button
+                      class="btn btn-outline-secondary {% if shuttle[2] <= 0 %}disabled{% endif %}"
+                      type="submit"
+                      style="font-weight: 600"
+                    >
+                      Book Shuttle
+                    </button>
+                    <input type="hidden" name="points" value="{{ pointsTodeduct }}" />
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <!-- No Results Message -->
+      {% if shuttle_list|length == 0 %}
+      <div class="alert alert-info text-center py-4 fs-5" style="background-color: rgba(239, 150, 81, 0.2); color: #333; border-color: var(--orange);">
+        No shuttles found matching your criteria. Please try different search
+        parameters.
+      </div>
+      {% endif %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

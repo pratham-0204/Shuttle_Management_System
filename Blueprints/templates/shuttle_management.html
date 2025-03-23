@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shuttle Management</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary: #3F7D58;
+            --light: #EFEFEF;
+            --orange: #EF9651;
+            --red: #EC5228;
+        }
+        
+        .bg-primary-custom {
+            background-color: var(--primary) !important;
+        }
+        
+        .bg-orange-custom {
+            background-color: var(--orange) !important;
+        }
+        
+        .text-primary-custom {
+            color: var(--primary) !important;
+        }
+        
+        body {
+            background-color: var(--light);
+        }
+        
+        .btn-primary-custom {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary-custom:hover {
+            background-color: #2d5e41;
+            color: white;
+        }
+        
+        .btn-orange-custom {
+            background-color: var(--orange);
+            color: white;
+        }
+        
+        .btn-orange-custom:hover {
+            background-color: var(--red);
+            color: white;
+        }
+        
+        .btn-danger-custom {
+            background-color: var(--red);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary-custom">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="bi bi-bus-front"></i> Shuttle Management System
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin_logout"><i class="bi bi-box-arrow-right"></i> Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="container py-4">
+        <!-- Back button -->
+        <div class="mb-3">
+            <a href="admin_dashboard" class="btn btn-secondary" style="background-color: var(--primary);">
+                <i class="bi bi-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+        
+        <div class="card shadow">
+            <div class="card-header bg-primary-custom text-white py-3">
+                <h1 class="mb-0">Shuttle Management</h1>
+            </div>
+            
+            <div class="card-body">
+                <!-- Flash Messages -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                    <div class="flash-messages">
+                        {% for category, message in messages %}
+                        <div class="alert alert-{% if category == 'success' %}success{% else %}danger{% endif %} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                {% endwith %}
+                
+                <button class="btn btn-orange-custom mb-4" data-bs-toggle="modal" data-bs-target="#newShuttleModal">
+                    <i class="bi bi-plus-circle"></i> Add New Shuttle
+                </button>
+                
+                <form action="{{ url_for('admin.shuttle_management') }}" method="POST">
+                    <div class="mb-3">
+                        <label for="shuttle_name" class="form-label text-primary-custom fw-bold">Shuttle Name:</label>
+                        <select id="shuttle_name" name="name" class="form-select" required>
+                            <option value="" disabled selected>Select a shuttle</option>
+                            {% for shuttle in shuttles %}
+                            <option value="{{ shuttle.id }}">{{ shuttle.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label text-primary-custom fw-bold">Stop Sequence:</label>
+                        <div id="stop-container">
+                            <div class="stop-sequence d-flex align-items-center gap-2 mb-2">
+                                <select name="stop_sequence[]" class="form-select" required>
+                                    <option value="" disabled selected>Select a stop</option>
+                                    {% for stop in stops %}
+                                    <option value="{{ stop.id }}">{{ stop.name }}</option>
+                                    {% endfor %}
+                                </select>
+                                <button type="button" class="btn btn-danger-custom btn-sm" onclick="removeStop(this)">
+                                    <i class="bi bi-dash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-primary-custom btn-sm mt-2" onclick="addStop()">
+                            <i class="bi bi-plus"></i> Add Another Stop
+                        </button>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="date" class="form-label text-primary-custom fw-bold">Date:</label>
+                            <input type="date" id="date" name="date" class="form-control" required>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <label for="time" class="form-label text-primary-custom fw-bold">Time:</label>
+                            <input type="time" id="time" name="time" class="form-control" required>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <label for="capacity" class="form-label text-primary-custom fw-bold">Capacity:</label>
+                            <input type="number" id="capacity" name="capacity" min="1" class="form-control" required>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-primary-custom">
+                            <i class="bi bi-check-circle"></i> Submit
+                        </button>
+                        <a href="admin_dashboard" class="btn btn-secondary ms-2">
+                            <i class="bi bi-x-circle"></i> Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal for adding new shuttle -->
+    <div class="modal fade" id="newShuttleModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-primary-custom text-white">
+                    <h5 class="modal-title" id="modalLabel">Add New Shuttle</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="new-shuttle-form" action="{{ url_for('admin.shuttle_management') }}" method="POST">
+                        <div class="mb-3">
+                            <label for="new_shuttle_name" class="form-label text-primary-custom fw-bold">Shuttle Name:</label>
+                            <input type="text" id="new_shuttle_name" name="new_shuttle_name" class="form-control" required>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <button type="submit" class="btn btn-orange-custom">
+                                <i class="bi bi-plus-circle"></i> Add Shuttle
+                            </button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                <i class="bi bi-x-circle"></i> Cancel
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Add new stop selection field
+        function addStop() {
+            const container = document.getElementById('stop-container');
+            const div = document.createElement('div');
+            div.className = 'stop-sequence d-flex align-items-center gap-2 mb-2';
+            
+            // Clone the first stop dropdown to maintain the same options
+            const firstSelect = document.querySelector('select[name="stop_sequence[]"]');
+            const newSelect = firstSelect.cloneNode(true);
+            newSelect.className = 'form-select';
+            
+            div.appendChild(newSelect);
+            
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.className = 'btn btn-danger-custom btn-sm';
+            removeBtn.innerHTML = '<i class="bi bi-dash"></i>';
+            removeBtn.onclick = function() { removeStop(this); };
+            
+            div.appendChild(removeBtn);
+            container.appendChild(div);
+        }
+        
+        // Remove stop field
+        function removeStop(button) {
+            const stopContainer = document.getElementById('stop-container');
+            if (stopContainer.children.length > 1) {
+                button.parentElement.remove();
+            } else {
+                alert("At least one stop is required.");
+            }
+        }
+        
+        // Set default date to today
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date();
+            const year = today.getFullYear();
+            let month = today.getMonth() + 1;
+            let day = today.getDate();
+            
+            // Add leading zeros if needed
+            month = month < 10 ? '0' + month : month;
+            day = day < 10 ? '0' + day : day;
+            
+            const formattedDate = `${year}-${month}-${day}`;
+            document.getElementById('date').value = formattedDate;
+        });
+    </script>
+</body>
+</html>
